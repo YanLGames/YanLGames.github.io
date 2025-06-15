@@ -1,36 +1,910 @@
-<!doctype html>
-<html lang="zh-cn">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YanL｜Home</title>
-    <style type="text/css">
-        .small {font-size:7px}
-        .normal {font-size:14px}
-        .jz {width:100%;margin:0 auto;text-align:center;position:fixed;bottom:0}
-        #centeredtext {text-align:center}
-        .top {position:fix}
+    <title>星铁倒计时 | HSRC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #00a7f7;
+            --accent-color: #6a5acd; /* 紫色调 */
+            --highlight-color: #ff6b6b;
+            --hsr-blue: #4a90e2;
+            --hsr-purple: #8a2be2;
+            --hsr-yellow: #ffd700;
+            --text-light: #ffffff;
+            --text-gray: #cccccc;
+            --text-dark: #333333;
+            --bg-dark: #0d0d17;
+            --bg-medium: #101022;
+            --bg-light: #0a0a1a;
+            --card-bg: rgba(30, 30, 50, 0.7);
+            --modal-bg: rgba(10, 10, 25, 0.95);
+            --nav-height: 70px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c1d, #1a1a3a, #0d0d2d);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-top: var(--nav-height);
+            background-attachment: fixed;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJnYmEoMTA2LCA5MCwgMjA1LCAwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzA5MDkyMCIvPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=');
+        }
+        
+        /* 导航栏样式 */
+        header.top {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(15, 10, 30, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(138, 43, 226, 0.4);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            height: var(--nav-height);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo span {
+            color: var(--accent-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-light);
+        }
+        
+        .nav-links a.active {
+            color: var(--hsr-yellow);
+        }
+        
+        .nav-links a.active::after,
+        .nav-links a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        /* 主内容区域 */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: calc(100vh - var(--nav-height) - 150px);
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--hsr-yellow);
+            display: inline-block;
+            background: rgba(15, 10, 30, 0.7);
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: 2px solid var(--accent-color);
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+        }
+        
+        .section-title::before {
+            left: 0;
+        }
+        
+        .section-title::after {
+            right: 0;
+        }
+        
+        /* 倒计时卡片样式 */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .countdown-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .countdown-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .countdown-header {
+            margin-bottom: 20px;
+        }
+        
+        .countdown-header h3 {
+            font-size: 1.8rem;
+            color: var(--hsr-yellow);
+            margin-bottom: 10px;
+        }
+        
+        .countdown-header p {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+        }
+        
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+        
+        .time-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--hsr-yellow);
+        }
+        
+        .time-label {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            border: 2px solid var(--accent-color);
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: transparent;
+            color: var(--accent-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 90, 205, 0.4);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-large {
+            font-size: 1.2rem;
+            padding: 15px 35px;
+        }
+        
+        /* 角色展示区 */
+        .character-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .character-name {
+            font-size: 1.3rem;
+            color: var(--hsr-yellow);
+            padding: 8px 15px;
+            background: rgba(30, 20, 50, 0.6);
+            border-radius: 8px;
+            border: 1px solid var(--accent-color);
+        }
+        
+        /* 首页样式 */
+        .home-hero {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .home-hero h1 {
+            font-size: 3.5rem;
+            color: var(--hsr-yellow);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .home-hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.8rem;
+            color: var(--hsr-yellow);
+            margin-bottom: 15px;
+        }
+        
+        /* 版本信息样式 */
+        .version-info {
+            background: rgba(30, 20, 50, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin: 30px auto;
+            max-width: 600px;
+            border: 2px solid var(--hsr-purple);
+        }
+        
+        .version-number {
+            font-size: 2.5rem;
+            color: var(--hsr-yellow);
+            margin-bottom: 10px;
+        }
+        
+        .version-name {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* 增加版本信息视觉效果 */
+        .version-number {
+        font-size: 3rem;
+        text-shadow: 0 0 10px var(--hsr-yellow);
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background: rgba(10, 5, 20, 0.9);
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(10px);
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .copyright {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+        
+        .copyright a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .copyright a:hover {
+            text-decoration: underline;
+        }
+        
+        .mobile-only {
+            display: none;
+        }   
+
+        /* 响应式设计 */ 
+        @media (max-width: 480px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                height: auto;
+                padding: 10px;
+            }
+            
+            body {
+                padding-top: 120px;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .section-title::before,
+            .section-title::after {
+                display: none;
+            }
+            
+            .countdown-card {
+                min-width: 100%;
+                padding: 20px;
+            }
+            
+            .home-hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .character-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* 移动端显示手机按钮，隐藏桌面按钮 */
+        @media (max-width: 768px) {
+            .desktop-only {
+                display: none;
+            }
+            .mobile-only {
+                display: inline-block;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(106, 90, 205, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(106, 90, 205, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(106, 90, 205, 0); }
+        }
     </style>
 </head>
 <body>
     <header class="top">
         <nav>
-			<a href="#" style="color:#000;text-decoration:none;font-weight:bold">YanL</a>
-            <a href="#" style="color:#808080;text-decoration:none">Home</a>
-            <a href="#" style="color:#000;text-decoration:none">Games</a>
-            <a href="#" style="color:#000;text-decoration:none">Music</a>
+            <a href="#" class="logo">星铁倒计时<span>HSRC</span></a>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-page="home">首页</a>
+                <a href="#" class="nav-link" data-page="livestream">前瞻直播</a>
+                <a href="#" class="nav-link" data-page="version">版本更新</a>
+                <a href="#" class="nav-link" data-page="wish">卡池倒计时</a>
+            </div>
         </nav>
     </header>
-<hr>
+    
     <main>
-		<div id="centeredtext">
-        <h4>网站维护，下载请B站私信作者</h4>
-        <p style="color:#808080" class="small">前往<a href="games.html" style="color:#000;text-decoration:none">Games</a>页面以查看</p></div>
+        <!-- 首页内容 -->
+        <div id="home" class="page active">
+            <div class="home-hero">
+                <div class="countdown-container">
+                    <div class="countdown-card floating">
+                        <div class="countdown-header">
+                            <h3>前瞻直播</h3>
+                            <p>距离下一场前瞻直播</p>
+                        </div>
+                        <div class="countdown-display">
+                            <div class="time-unit">
+                                <div class="time-value" id="home-live-days">00</div>
+                                <div class="time-label">天</div>
+                            </div>
+                            <div class="time-unit">
+                                <div class="time-value" id="home-live-hours">00</div>
+                                <div class="time-label">时</div>
+                            </div>
+                            <div class="time-unit">
+                                <div class="time-value" id="home-live-minutes">00</div>
+                                <div class="time-label">分</div>
+                            </div>
+                        </div>
+                        <a href="#" class="btn switch-page" data-page="livestream">查看详情</a>
+                    </div>
+                    
+                    <div class="countdown-card floating">
+                        <div class="countdown-header">
+                            <h3>版本更新</h3>
+                            <p>距离下一个版本更新</p>
+                        </div>
+                        <div class="countdown-display">
+                            <div class="time-unit">
+                                <div class="time-value" id="home-version-days">00</div>
+                                <div class="time-label">天</div>
+                            </div>
+                            <div class="time-unit">
+                                <div class="time-value" id="home-version-hours">00</div>
+                                <div class="time-label">时</div>
+                            </div>
+                            <div class="time-unit">
+                                <div class="time-value" id="home-version-minutes">00</div>
+                                <div class="time-label">分</div>
+                            </div>
+                        </div>
+                        <a href="#" class="btn switch-page" data-page="version">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 前瞻直播页 -->
+        <div id="livestream" class="page">
+            <div class="section-title">
+                <h2>前瞻直播倒计时</h2>
+            </div>
+            
+            <div class="countdown-container">
+                <div class="countdown-card pulse">
+                    <div class="countdown-header">
+                        <h3>前瞻直播</h3>
+                        <p>下一场前瞻直播</p>
+                    </div>
+                    <div class="countdown-display">
+                        <div class="time-unit">
+                            <div class="time-value" id="live-days">00</div>
+                            <div class="time-label">天</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="live-hours">00</div>
+                            <div class="time-label">时</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="live-minutes">00</div>
+                            <div class="time-label">分</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="live-seconds">00</div>
+                            <div class="time-label">秒</div>
+                        </div>
+                    </div>
+                    <p style="margin: 15px 0; color: var(--hsr-yellow);">
+                        <i class="fas fa-calendar-alt"></i> <span id="livestream-date">2024-06-07 19:30:00</span>
+                    </p>
+                    <a href="https://live.bilibili.com/27263119" class="btn btn-large" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 前往官方直播间
+                    </a>
+                    <a href="bilibili://live/27263119" class="btn btn-large mobile-only" id="mobile-live-btn">
+                        <i class="fas fa-mobile-alt"></i> 手机端观看
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 版本更新页 -->
+        <div id="version" class="page">
+            <div class="section-title">
+                <h2>版本更新倒计时</h2>
+            </div>
+            
+            <div class="countdown-container">
+                <div class="countdown-card">
+                    <div class="countdown-header">
+                        <h3>版本更新</h3>
+                        <p>距离下一个版本更新</p>
+                    </div>
+                    <div class="countdown-display">
+                        <div class="time-unit">
+                            <div class="time-value" id="version-days">00</div>
+                            <div class="time-label">天</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="version-hours">00</div>
+                            <div class="time-label">时</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="version-minutes">00</div>
+                            <div class="time-label">分</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="version-seconds">00</div>
+                            <div class="time-label">秒</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <div class="version-number" id="next-version-num">2.4</div>
+                        <div class="version-name" id="next-version-name">长日入夜行</div>
+                    </div>
+                    
+                    <p style="margin: 15px 0; color: var(--hsr-yellow);">
+                        <i class="fas fa-calendar-alt"></i> <span id="version-date">2024-07-17 06:00:00</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 卡池倒计时页 -->
+        <div id="wish" class="page">
+            <div class="section-title">
+                <h2>卡池倒计时</h2>
+            </div>
+            
+            <div class="countdown-container">
+                <!-- 当前卡池 -->
+                <div class="countdown-card">
+                    <div class="countdown-header">
+                        <h3>当前卡池</h3>
+                        <p>距离当前卡池结束</p>
+                    </div>
+                    <div class="countdown-display">
+                        <div class="time-unit">
+                            <div class="time-value" id="current-days">00</div>
+                            <div class="time-label">天</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="current-hours">00</div>
+                            <div class="time-label">时</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="current-minutes">00</div>
+                            <div class="time-label">分</div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-display" id="current-characters"></div>
+    
+                        <p style="margin-top: 15px; color: var(--text-gray);">
+                            <i class="fas fa-calendar-alt"></i> 结束时间: <span id="current-end-date">2024-07-09 18:00:00</span>
+                        </p>
+                    </div>
+                
+                <!-- 下一个卡池 -->
+                <div class="countdown-card">
+                    <div class="countdown-header">
+                        <h3>下一个卡池</h3>
+                        <p>距离下一个卡池开启</p>
+                    </div>
+                    <div class="countdown-display">
+                        <div class="time-unit">
+                            <div class="time-value" id="next-days">00</div>
+                            <div class="time-label">天</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="next-hours">00</div>
+                            <div class="time-label">时</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="time-value" id="next-minutes">00</div>
+                            <div class="time-label">分</div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-display" id="next-characters"></div>
+    
+                    <p style="margin-top: 15px; color: var(--text-gray);">
+                        <i class="fas fa-calendar-alt"></i> 开启时间: <span id="next-start-date">2024-07-09 18:00:00</span>
+                    </p>
+                </div>
+            </div>
+        </div>
     </main>
-    <footer class="small">
-        <div class="jz">如遇无法点击的链接，为网页未完成的页面，尽请期待<br />
-        ©2024 YanL-All Rights Reserved.</div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="copyright">
+                <p>本网站由羽洛Luo制作，非官方产品，所有数据仅供参考</p>
+            </div>
+        </div>
     </footer>
+    
+    <script>
+        // =====================
+        // 主初始化函数
+        // =====================
+        function initApp() {
+            setupPageNavigation();
+            renderCharacters();
+            setupDisplayInfo();
+            startCountdowns();
+
+            const mobileBtn = document.getElementById('mobile-live-btn');
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 尝试打开B站客户端
+                    window.location.href = 'bilibili://live/27263119';
+                    
+                    // 如果3秒后仍未跳转，打开网页版
+                    setTimeout(function() {
+                        if (!document.hidden) {
+                            window.open('https://live.bilibili.com/27263119', '_blank');
+                        }
+                    }, 3000);
+                });
+            }
+        }
+
+        // =====================
+        // 功能模块
+        // =====================
+
+        /**
+         * 设置页面导航功能
+         */
+        function setupPageNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const switchLinks = document.querySelectorAll('.switch-page');
+            const pages = document.querySelectorAll('.page');
+
+            // 页面切换函数
+            const switchPage = (pageId) => {
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+                
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.page === pageId);
+                });
+                
+                window.scrollTo(0, 0);
+            };
+
+            // 绑定导航事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage(link.dataset.page);
+                });
+            });
+
+            // 绑定内链跳转事件
+            switchLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage(link.dataset.page);
+                });
+            });
+        }
+
+        /**
+         * 渲染角色列表
+         */
+        function renderCharacters() {
+            const renderCharacterList = (containerId, characters) => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = characters.map(char => 
+                    `<div class="character-name">${char}</div>`
+                ).join('');
+            };
+
+            renderCharacterList('current-characters', wishData.current.characters);
+            renderCharacterList('next-characters', wishData.next.characters);
+        }
+
+        /**
+         * 设置页面显示信息
+         */
+        function setupDisplayInfo() {
+            // 直播信息
+            document.getElementById('livestream-date').textContent = livestreamData.displayDate;
+            
+            // 版本信息
+            const versionElements = {
+                'version-date': versionData.displayDate,
+                'next-version-num': versionData.versionNumber,
+                'next-version-name': versionData.versionName
+            };
+            
+            Object.entries(versionElements).forEach(([id, value]) => {
+                document.getElementById(id).textContent = value;
+            });
+
+            // 卡池信息
+            document.getElementById('current-end-date').textContent = wishData.current.displayEndDate;
+            document.getElementById('next-start-date').textContent = wishData.next.displayStartDate;
+        }
+
+        /**
+         * 启动倒计时功能
+         */
+        function startCountdowns() {
+            updateAllCountdowns();
+            setInterval(updateAllCountdowns, 1000);
+        }
+
+        // =====================
+        // 工具函数
+        // =====================
+
+        /**
+         * 更新所有倒计时显示
+         */
+        function updateAllCountdowns() {
+            const now = new Date();
+            
+            // 直播倒计时
+            updateCountdown('home-live', new Date(livestreamData.date), now);
+            updateCountdown('live', new Date(livestreamData.date), now);
+            
+            // 版本倒计时
+            updateCountdown('home-version', new Date(versionData.date), now);
+            updateCountdown('version', new Date(versionData.date), now);
+            
+            // 卡池倒计时
+            updateCountdown('current', new Date(wishData.current.endDate), now);
+            updateCountdown('next', new Date(wishData.next.startDate), now);
+        }
+
+        /**
+         * 更新单个倒计时显示
+         * @param {string} prefix - 倒计时元素ID前缀
+         * @param {Date} targetDate - 目标时间
+         * @param {Date} now - 当前时间
+         */
+        function updateCountdown(prefix, targetDate, now) {
+            let diff = targetDate - now;
+            
+            if (diff <= 0) {
+                // 时间已到，重置为0
+                ['days', 'hours', 'minutes', 'seconds'].forEach(unit => {
+                    const el = document.getElementById(`${prefix}-${unit}`);
+                    if (el) el.textContent = '00';
+                });
+                return;
+            }
+            
+            // 计算时间差
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff -= days * (1000 * 60 * 60 * 24);
+            
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            diff -= hours * (1000 * 60 * 60);
+            
+            const minutes = Math.floor(diff / (1000 * 60));
+            diff -= minutes * (1000 * 60);
+            
+            const seconds = Math.floor(diff / 1000);
+            
+            // 更新显示
+            document.getElementById(`${prefix}-days`).textContent = days.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-hours`).textContent = hours.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-minutes`).textContent = minutes.toString().padStart(2, '0');
+            
+            const secondsEl = document.getElementById(`${prefix}-seconds`);
+            if (secondsEl) {
+                secondsEl.textContent = seconds.toString().padStart(2, '0');
+            }
+        }
+
+        // ====配置区域====
+        
+        // 前瞻直播信息
+        const livestreamData = {
+            date: "2025-06-20T19:30:00+08:00",     // ISO格式时间
+            displayDate: "2025-06-20 19:30:00"     // 显示用格式
+        };
+        
+        // 版本更新信息
+        const versionData = {
+            date: "2025-07-02T11:00:00+08:00",     // ISO格式时间
+            displayDate: "2025-07-02 11:00:00",    // 显示用格式
+            versionNumber: "3.4",                  // 版本号
+            versionName: "？"            // 版本名称
+        };
+        
+        // 卡池信息（支持1-4个角色）
+        const wishData = {
+            current: {
+                endDate: "2025-07-01T18:00:00+08:00",
+                displayEndDate: "2025-07-01 18:00:00",
+                characters: ["赛飞儿", "阿格莱雅"] // 当前UP角色
+            },
+            next: {
+                startDate: "2025-07-02T11:00:00+08:00",
+                displayStartDate: "2025-07-25 11:00:00",
+                characters: ["白厄", "待公布" ]        // 下期UP角色
+            }
+        };
+
+        // ====配置区域结束====
+
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', initApp);
+</script>
 </body>
-</html>
+</html>    
